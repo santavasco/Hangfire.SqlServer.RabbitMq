@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using RabbitMQ.Client;
 
 namespace Hangfire.SqlServer.RabbitMQ
@@ -30,6 +30,10 @@ namespace Hangfire.SqlServer.RabbitMQ
                 cf.Password = conf.Password;
                 cf.VirtualHost = conf.VirtualHost;
             }
+
+            cf.NetworkRecoveryInterval = conf.NetworkRecoveryInterval;
+            cf.TopologyRecoveryEnabled = conf.TopologyRecoveryEnabled;
+            cf.AutomaticRecoveryEnabled = conf.AutomaticRecoveryEnabled;
 
             var provider = new RabbitMqJobQueueProvider(queues, cf, channel => 
                 channel.BasicQos(0,
