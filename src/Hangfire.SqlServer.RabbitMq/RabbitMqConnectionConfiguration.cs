@@ -10,7 +10,11 @@ namespace Hangfire.SqlServer.RabbitMQ
         public const string DefaultUser = "guest";
         public const string DefaultPassword = "guest";
         public const string DefaultVirtualHost = "/";
-        public const ushort DefaultPrefetchCount = 1;
+        public const ushort DefaultPrefetchCount = 10;
+        public const int DefaultNetworkRecoveryInterval = 10;
+        public const bool DefaultTopologyRecoveryEnabled = true;
+        public const bool DefaultAutomaticRecoveryEnabled = true;
+
 
         public RabbitMqConnectionConfiguration()
             : this(DefaultHost, DefaultPort, DefaultUser, DefaultPassword)
@@ -27,11 +31,22 @@ namespace Hangfire.SqlServer.RabbitMQ
         {
         }
 
+        private void DefaultSets()
+        {
+            VirtualHost = DefaultVirtualHost;
+            PrefetchCount = DefaultPrefetchCount;
+
+            TopologyRecoveryEnabled = DefaultTopologyRecoveryEnabled;
+            NetworkRecoveryInterval = TimeSpan.FromSeconds(DefaultNetworkRecoveryInterval);
+            AutomaticRecoveryEnabled = DefaultAutomaticRecoveryEnabled;
+        }
+
         public RabbitMqConnectionConfiguration(Uri uri)
         {
             if (uri == null) throw new ArgumentNullException("uri");
 
             Uri = uri;
+            DefaultSets();
         }
 
         public RabbitMqConnectionConfiguration(string host, int port, string username, string password, ushort prefetchCount = DefaultPrefetchCount)
@@ -44,8 +59,7 @@ namespace Hangfire.SqlServer.RabbitMQ
             Username = username;
             Password = password;
             Port = port;
-            VirtualHost = DefaultVirtualHost;
-            PrefetchCount = DefaultPrefetchCount;
+            DefaultSets();
         }
 
         public string Username { get; set; }
@@ -73,5 +87,18 @@ namespace Hangfire.SqlServer.RabbitMQ
         /// establish a per-queue concurrency constraint of only one job execution at a time!
         /// </remarks>
         public ushort PrefetchCount { get; set; }
+
+        /// <summary>
+        /// See <see cref="RabbitMQ.Client.TopologyRecoveryEnabled"/>
+        /// </summary>
+        public bool TopologyRecoveryEnabled { get; set; }
+        /// <summary>
+        /// See <see cref="RabbitMQ.Client.AutomaticRecoveryEnabled"/>
+        /// </summary>
+        public bool AutomaticRecoveryEnabled { get; set; }
+        /// <summary>
+        /// See <see cref="RabbitMQ.Client.NetworkRecoveryInterval"/>
+        /// </summary>
+        public TimeSpan NetworkRecoveryInterval { get; set; }
     }
 }
